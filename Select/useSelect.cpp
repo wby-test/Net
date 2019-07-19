@@ -69,53 +69,50 @@ int main()
             std::cout << "select error" << std::endl;
             if(errno != EINTR)
                 break;
-        } else if(ret == 0){
+        } else if(ret == 0)
+        {
             //std::cout << "in time , no handle occour" << std::endl;
             continue;
-        } else {
+        } else 
+        {
             if FD_ISSET(listenFd, &readSet)
             {
                 sockaddr_in clientAddr;
                 socklen_t   clientLen = sizeof(clientAddr);
-              int clientFd = accept(listenFd, (sockaddr *)&clientAddr, &clientLen);
-              if(clientFd == -1)
-              {
-                  break;
-              } 
+                int clientFd = accept(listenFd, (sockaddr *)&clientAddr, &clientLen);
+                if(clientFd == -1)
+                {
+                    break;
+                } 
 
-              std::cout << "accept a client socket: " << clientFd << std::endl;
-              clientFds.push_back(clientFd);
-              if(clientFd > maxFd)
-              {
-                  maxFd = clientFd;
-              }
-
-              else
-              {
-                  char recvbuf[64];
-                  int clientFdsLen = clientFds.size();
-                  for(int i = 0; i < clientFdsLen; i++)
-                  {
-                      if(clientFds[i] != INVALID_FD && FD_ISSET(clientFds[i], &readSet))
-                      {
-                          memset(recvbuf, 0, sizeof(recvbuf));
-                          int recvLength = recv(clientFds[i], recvbuf, 64, 0);
-                          if (recvLength <= 0 && errno != EINTR )
-                          {
-                              std::cout << "recv error" << clientFds[i] << std::endl;
-                              close(clientFds[i]);
-                              clientFds[i] = INVALID_FD;
-                              continue;
-                          }
-                          std::cout << "clientfd is: " << clientFds[i] << "recvbuf is: " << recvbuf << std::endl;
-                      }
-                  }
-              }
-              
+                std::cout << "accept a client socket: " << clientFd << std::endl;
+                clientFds.push_back(clientFd);
+                if(clientFd > maxFd)
+                {
+                    maxFd = clientFd;
+                } else
+                {
+                    char recvbuf[64];
+                    int clientFdsLen = clientFds.size();
+                    for(int i = 0; i < clientFdsLen; i++)
+                    {
+                        if(clientFds[i] != INVALID_FD && FD_ISSET(clientFds[i], &readSet))
+                        {
+                            memset(recvbuf, 0, sizeof(recvbuf));
+                            int recvLength = recv(clientFds[i], recvbuf, 64, 0);
+                            if (recvLength <= 0 && errno != EINTR )
+                            {
+                                std::cout << "recv error" << clientFds[i] << std::endl;
+                                close(clientFds[i]);
+                                clientFds[i] = INVALID_FD;
+                                continue;
+                            }
+                            std::cout << "clientfd is: " << clientFds[i] << "recvbuf is: " << recvbuf << std::endl;
+                        }
+                    }
+                } 
             } 
-        }
-
-        
+        }     
     }
 
     int clientFdsLen = clientFds.size();
