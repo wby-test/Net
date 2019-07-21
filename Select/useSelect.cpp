@@ -53,7 +53,7 @@ int main()
         int cliNo = clientFds.size();
         for (int i = 0; i < cliNo; i++)
         {
-            if (clientFds[i] == INVALID_FD)
+            if (clientFds[i] != INVALID_FD)
             {
                 FD_SET(clientFds[i], &readSet);
             }
@@ -90,36 +90,41 @@ int main()
                 if(clientFd > maxFd)
                 {
                     maxFd = clientFd;
-                } else
-                {
-                    char recvbuf[64];
-                    int clientFdsLen = clientFds.size();
-                    for(int i = 0; i < clientFdsLen; i++)
-                    {
-                        if(clientFds[i] != INVALID_FD && FD_ISSET(clientFds[i], &readSet))
-                        {
-                            memset(recvbuf, 0, sizeof(recvbuf));
-                            int recvLength = recv(clientFds[i], recvbuf, 64, 0);
-                            if (recvLength <= 0 && errno != EINTR )
-                            {
-                                std::cout << "recv error" << clientFds[i] << std::endl;
-                                close(clientFds[i]);
-                                clientFds[i] = INVALID_FD;
-                                continue;
-                            }
-                            std::cout << "clientfd is: " << clientFds[i] << "recvbuf is: " << recvbuf << std::endl;
-                        }
-                    }
                 } 
+            }
+            else
+            {
+                char recvbuf[64];
+                int clientFdsLen = clientFds.size();
+                for(int i = 0; i < clientFdsLen; i++)
+                {
+                    if(clientFds[i] != INVALID_FD && FD_ISSET(clientFds[i], &readSet))
+                    {
+                        memset(recvbuf, 0, sizeof(recvbuf));
+                        int recvLength = recv(clientFds[i], recvbuf, 64, 0);
+                        if (recvLength <= 0 && errno != EINTR )
+                        {
+                            std::cout << "recv error: " << clientFds[i] << std::endl;
+                            close(clientFds[i]);
+                            clientFds[i] = INVALID_FD;
+                            continue;
+                        }
+                        std::cout << "clientfd is: " << clientFds[i] << "recvbuf is: " << recvbuf << std::endl;
+                    }
+                }
             } 
+        
         }     
     }
 
     int clientFdsLen = clientFds.size();
     for(int i = 0; i < clientFdsLen; i++)
     {
-        clientFds[i] = INVALID_FD;
-        close(clientFds[i]);
+        if (clientFds[i]   != INVALID_FD)
+        {
+            close(clientFds[i]);
+        }
+            
     }
     close(listenFd);
     
