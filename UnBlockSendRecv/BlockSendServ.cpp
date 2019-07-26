@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <signal.h>
 
 #define PORT  3000
 
@@ -37,6 +38,7 @@ int main(int argc, char **argv)
         return -1;
     }
 
+#if 0 //test accpent
 	sockaddr_in clientAddr;
 	socklen_t clientLen = sizeof(clientAddr);
 	int acceptFd = accept(listenFd, (sockaddr *)&clientAddr, &clientLen);
@@ -48,18 +50,24 @@ int main(int argc, char **argv)
 			std::cout << "accept a client connection: " << acceptFd << std::endl;
 		}
 	}
+    #endif
 			             
 
-#if 0
+#if 1
+    int count = 0;
     while(true)
     {
         sockaddr_in clientAddr;
         socklen_t  clientLen = sizeof(clientAddr);
+        std::cout << "begin" << std::endl;
         int acceptFd = accept(listenFd, (sockaddr *)&clientAddr, &clientLen);
+        std::cout << "connect end" << std::endl;
         if(acceptFd != -1)
         {
 			std::cout << "accept a client connection: " << acceptFd << std::endl;
         }
+        count++;
+        std::cout << count  << " fd is: " << acceptFd <<std::endl;
     }
 #endif
     close(listenFd);
