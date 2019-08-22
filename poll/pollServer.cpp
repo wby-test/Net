@@ -135,9 +135,9 @@ int main(int argc, char **argv)
         }
 
         if(exist_invalid_fd) {
-            for(auto iter = fds.begin(); iter != fds.end(); ++iter) {
+            for(auto iter = fds.begin(); iter != fds.end();) {
                 if(iter->fd == INVALID_FD) {
-                    iter = fds.erase(iter);
+                   iter = fds.erase(iter);
                 }
                 else {
                     ++iter;
