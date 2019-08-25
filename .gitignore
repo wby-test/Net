@@ -8,6 +8,7 @@
 
 # C stuff
 *.o
+*.so
 
 # Windows stuff
 *.obj
